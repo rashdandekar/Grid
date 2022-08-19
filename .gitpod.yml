@@ -4,6 +4,6 @@
 
 tasks:
   - init: pip3 install -r requirements.txt
-    command: python main.py
+    command: clear && python3 main.py
 
 
