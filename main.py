@@ -1,9 +1,12 @@
 import openpyxl as xl
 import pandas as pd
 import read_xl_profile as rxp
+import datetime
+import scalecums
 
 def get_data_for_scaling()->dict:
-  entity_types=['USERDF','SOURCE','SEP','TANK','JOINT','WELL','INLGEN']
+  # entity_types=['USERDF','SOURCE','SEP','TANK','JOINT','WELL','INLGEN']
+  entity_types=['SEP']
   df_dict={}
   print("\nLoading workbook...\n")
   wbk=xl.load_workbook('Prod_Prof_scale.xlsx')
@@ -24,8 +27,18 @@ def get_data_for_scaling()->dict:
 def main()->None:
   data=get_data_for_scaling()
   print(data.keys())
-  df=data[list(data.keys())[1]]
-  print(df.head())
+  df=data[list(data.keys())[0]]
+  # print(df.head())
+  cols=df.columns.values
+  data_values=df.values
+  data_arrays=[[data_values[i,j] for i in range(len(data_values))] for j in range(len(cols))]
+  dates_list=df.index.to_numpy()
+  dates_list = [datetime.datetime.fromisoformat(x[0:len(x)-1]) for x in dates_list]
+  
+  # print(type(cols))
+  # for col in cols:
+  #   print(col)
+
   pass  
   
 if __name__=='__main__':
