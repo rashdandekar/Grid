@@ -1,0 +1,8 @@
+openpyxl==3.0.3
+pandas==1.0.3
+numpy==1.18.4
+pywin32==227
+pywin32-ctypes==0.2.0
+scipy==1.4.1
+xlwings==0.19.5
+python-dateutil==2.8.1
