@@ -1,3 +1,4 @@
+# import openpyxl as xl
 import openpyxl as xl
 import pandas as pd
 import read_xl_profile as rxp
@@ -34,6 +35,7 @@ def main()->None:
   data_arrays=[[data_values[i,j] for i in range(len(data_values))] for j in range(len(cols))]
   dates_list=df.index.to_numpy()
   dates_list = [datetime.datetime.fromisoformat(x[0:len(x)-1]) for x in dates_list]
+  values=df.values
   
   # print(type(cols))
   # for col in cols:
