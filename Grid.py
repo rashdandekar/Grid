@@ -18,4 +18,4 @@ class Property:
 
     def __init__(self, name, values):
         self.name = name
-        self.valus = values
+        self.values = values
