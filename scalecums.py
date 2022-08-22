@@ -6,10 +6,12 @@ from numpy import interp
 import math
 
 
-def scale_cums_to_target_from_date(input_arr, from_date, target_cum):
+def scale_cums_to_target_from_date(input_arr,  target_cum,from_date=None):
     scaling_factor = target_cum / input_arr[-1][1]
+    if from_date is None:
+        from_date=input_arr[0][0]
     output_cums = [
-        cum * scaling_factor if date >= date_from else cum
+        cum * scaling_factor if date >= from_date else cum
         for date, cum in input_arr
     ]
     return output_cums
@@ -52,8 +54,8 @@ def main():
       cum * scaling_factor if date >= date_from else cum
       for date, cum in zip(dates_arr, cum_arr)
   ]
-  scaled_arr_fn = scale_cums_to_target_from_date(input_arr, date_from,
-                                                 target_cum)
+  scaled_arr_fn = scale_cums_to_target_from_date(input_arr, 
+                                                 target_cum,None)
   for date, cum, scaled_cum, scaled_cum_fn in zip(dates_arr, cum_arr, scaled_arr,
                                                   scaled_arr_fn):
       print(date, cum, scaled_cum, scaled_cum_fn)

@@ -27,7 +27,7 @@ def get_data_for_scaling()->dict:
 
 def main()->None:
   data=get_data_for_scaling()
-  print(data.keys())
+  print((list(data.keys()))[0])
   df=data[list(data.keys())[0]]
   # print(df.head())
   cols=df.columns.values
@@ -35,7 +35,10 @@ def main()->None:
   data_arrays=[[data_values[i,j] for i in range(len(data_values))] for j in range(len(cols))]
   dates_list=df.index.to_numpy()
   dates_list = [datetime.datetime.fromisoformat(x[0:len(x)-1]) for x in dates_list]
-  values=df.values
+  df.index=dates_list
+
+  
+  # values=df.values
   
   # print(type(cols))
   # for col in cols:
