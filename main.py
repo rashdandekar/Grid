@@ -1,8 +1,10 @@
 # import openpyxl as xl
+from dataclasses import replace
 import openpyxl as xl
 import pandas as pd
 import read_xl_profile as rxp
 import datetime
+import numpy as np
 
 # import profile_scaler
 from pathlib import Path
@@ -29,6 +31,21 @@ def get_data_for_scaling() -> dict:
         if not input_df.empty:
             df_dict[entity_type] = input_df
     return df_dict
+
+
+def get_rates_from_cum_series(series: pd.Series):
+    cums = list(series.to_numpy())
+    dates = series.index.to_numpy()
+    days = [(date - dates[0]) / np.timedelta64(1, "D") for date in dates]
+    rates = []
+    for i in range(len(cums) - 1):
+        rates.append((cums[i + 1] - cums[i]) / (days[i + 1] - days[i]))
+    rates.append(0)
+    # rate_series=pd.Series(rates)
+    # rate_series.index=series.index
+    output_df = pd.DataFrame(pd.concat([pd.Series(cums), pd.Series(rates)], axis=1))
+    output_df.index = series.index
+    return output_df
 
 
 def main() -> None:
@@ -62,10 +79,25 @@ def main() -> None:
                     (input_parameter.entity_name, input_parameter.property_name),
                     (
                         input_parameter.entity_name,
-                        "SCALED_" + input_parameter.property_name,
+                        "AVG_"
+                        + input_parameter.property_name.replace("CUM", "")
+                        + "_RATE"
+                    ),
+                    (
+                        input_parameter.entity_name,
+                        "SCALED_" + input_parameter.property_name
+                    ),
+                    (
+                        input_parameter.entity_name,
+                        "SCALED_"
+                        + "AVG_"
+                        + input_parameter.property_name.replace("CUM", "")
+                        + "_RATE"
                     ),
                 ]
-                new_df = pd.concat([df_to_scale, scaled_cum], axis=1)
+                original_cums_with_rates = get_rates_from_cum_series(df_to_scale)
+                new_cums_with_rates = get_rates_from_cum_series(scaled_cum)
+                new_df = pd.concat([original_cums_with_rates, new_cums_with_rates], axis=1)
                 new_df.columns = pd.MultiIndex.from_tuples(new_header)
                 df_dict[
                     "SCALED_"
@@ -74,10 +106,8 @@ def main() -> None:
                     + input_parameter.property_name
                 ] = new_df
 
-    if len(df_dict)>0:
+    if len(df_dict) > 0:
         print(df_dict.keys())
-
-
 
 
 class ProfileScaler:
