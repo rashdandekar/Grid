@@ -1,4 +1,3 @@
-from xmlrpc.client import boolean
 import openpyxl as xl
 from pathlib import Path
 import pandas
@@ -18,7 +17,7 @@ class ProfileScaler:
         print("\nLoading workbook...\n")
         self.input_wbk = xl.load_workbook(wbk_path)
 
-    def _get_required_columns(self, input_df: pandas.DataFrame):
+    def get_required_columns(self, input_df: pandas.DataFrame):
         # df=pd.read_excel(workbook,sheet_name=worksheet,header=[0,1],index_col=0,parse_dates=True,engine='openpyxl')
         columns_to_delete = []
         for tup in input_df.columns.values:
@@ -28,28 +27,7 @@ class ProfileScaler:
             input_df.pop(col)
         return input_df
 
-    def get_data_for_scaling(self) -> dict:
-        entity_types=['USERDF','SOURCE','SEP','TANK','JOINT','WELL','INLGEN']
-        # entity_types = ["SEP"]
-        df_dict = {}
-        # wbk=xl.load_workbook('Prod_Prof_scale.xlsx')
-        for entity_type in entity_types:
-            print(f"Starting to process {entity_type} sheet\n")
-            input_df = pandas.read_excel(
-                self.input_wbk,
-                sheet_name=entity_type,
-                header=[0, 1],
-                index_col=0,
-                engine="openpyxl",
-            )
-            input_dates = input_df.index.to_numpy()
-            input_df.index = input_dates
-            input_df = self._get_required_columns(input_df)
-            if not input_df.empty:
-                df_dict[entity_type] = input_df
-        return df_dict
-
-    def check_input_sheet_available(self) -> boolean:
+    def check_input_sheet_available(self) -> bool:
         if "Profile_Scaling_Input" in self.input_wbk.sheetnames:
             return True
         return False
